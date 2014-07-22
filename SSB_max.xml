@@ -1,0 +1,89 @@
+<Schema name="SSB">
+	<Cube name="SSB" cache="true" enabled="true">
+		<Table name="lineorder">
+		</Table>
+		<Dimension foreignKey="lo_orderdate" name="dates">
+			<Hierarchy name="default" hasAll="true" primaryKey="d_datekey">
+				<Table name="dates"></Table>
+				<Level name="d_year" column="d_year" type="Numeric"></Level>
+				<Level name="d_yearmonth" column="d_yearmonth" type="String"></Level>
+				<Level name="d_yearmonthnum" column="d_yearmonthnum" type="Integer"></Level>
+				<Level name="d_date" column="d_date" type="String"></Level>
+			</Hierarchy>
+		</Dimension>
+		<Dimension foreignKey="lo_orderdate" name="d_weeknuminyear">
+			<Hierarchy name="d_weeknuminyear" hasAll="true" primaryKey="d_datekey">
+				<Table name="dates"></Table>
+				<Level name="d_weeknuminyear" column="d_weeknuminyear" type="Integer"></Level>
+			</Hierarchy>
+		</Dimension>
+		<Dimension foreignKey="lo_custkey" name="customer">
+			<Hierarchy name="default" hasAll="true" primaryKey="C_CUSTKEY">
+				<Table name="customer"></Table>
+				<Level name="c_region" column="c_region" type="String"></Level>
+				<Level name="c_nation" column="c_nation" type="String"></Level>
+				<Level name="c_city" column="c_city" type="String"></Level>
+				<Level name="C_CUSTKEY" column="C_CUSTKEY" type="String"></Level>
+			</Hierarchy>
+		</Dimension>
+		<Dimension foreignKey="lo_partkey" name="part">
+			<Hierarchy name="default" hasAll="true" primaryKey="P_PARTKEY">
+				<Table name="part"></Table>
+				<Level name="p_mfgr" column="p_mfgr" type="String"></Level>
+				<Level name="p_category" column="p_category" type="String"></Level>
+				<Level name="p_brand1" column="p_brand1" type="String"></Level>
+				<Level name="P_PARTKEY" column="P_PARTKEY" type="String"></Level>
+			</Hierarchy>
+		</Dimension>
+		<Dimension foreignKey="lo_suppkey" name="supplier">
+			<Hierarchy name="default" hasAll="true" primaryKey="S_SUPPKEY">
+				<Table name="supplier"></Table>
+				<Level name="s_region" column="s_region" type="String"></Level>
+				<Level name="s_nation" column="s_nation" type="String"></Level>
+				<Level name="s_city" column="s_city" type="String"></Level>
+				<Level name="S_SUPPKEY" column="S_SUPPKEY" type="String"></Level>
+			</Hierarchy>
+		</Dimension>
+		<Dimension name="lo_quantity">
+			<Hierarchy hasAll="true">
+				<!-- No table element here. Fact table is assumed. -->
+				<Level name="lo_quantity" column="lo_quantity" type="Numeric" />
+			</Hierarchy>
+		</Dimension>
+		<Dimension name="lo_discount">
+			<Hierarchy hasAll="true">
+				<!-- No table element here. Fact table is assumed. -->
+				<Level name="lo_discount" column="lo_discount" type="Numeric" />
+			</Hierarchy>
+		</Dimension>
+		<Measure name=" lo_quantity" column="lo_quantity"
+			aggregator="max" visible="true">
+		</Measure>
+		<Measure name=" lo_discount" column="lo_discount"
+			aggregator="max" visible="true">
+		</Measure>
+		<Measure name=" lo_extendedprice" column="lo_extendedprice"
+			aggregator="max" visible="true">
+		</Measure>
+		<Measure name=" lo_revenue" column="lo_revenue" aggregator="max"
+			visible="true">
+		</Measure>
+		<Measure name=" lo_supplycost" column="lo_supplycost"
+			aggregator="max" visible="true">
+		</Measure>
+		<Measure name=" Revenue" aggregator="max" visible="true">
+			<MeasureExpression>
+				<SQL dialect="generic">
+					lo_extendedprice * lo_discount
+				</SQL>
+			</MeasureExpression>
+		</Measure>
+		<Measure name=" Profit" aggregator="max" visible="true">
+			<MeasureExpression>
+				<SQL dialect="generic">
+					lo_revenue - lo_supplycost
+				</SQL>
+			</MeasureExpression>
+		</Measure>
+	</Cube>
+</Schema>
